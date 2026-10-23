@@ -9,14 +9,45 @@ export function cn(...inputs: ClassValue[]): string {
 }
 
 /**
- * Formats numeric values to USD currency strings
+ * Formats numeric values to Sri Lankan Rupees (Rs. / LKR)
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
+  if (isNaN(amount) || amount === null || amount === undefined) {
+    return 'Rs. 0';
+  }
+  const formatted = new Intl.NumberFormat('en-LK', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
   }).format(amount);
+  return `Rs. ${formatted}`;
+}
+
+/**
+ * Formats Sri Lankan National Identity Card (NIC) numbers
+ * Accepts either old 9-digit format (e.g. 852341982V) or new 12-digit format (e.g. 199423801245)
+ */
+export function formatNIC(nic?: string): string {
+  if (!nic) return 'N/A';
+  const clean = nic.trim().toUpperCase();
+  if (clean.length === 10 && (clean.endsWith('V') || clean.endsWith('X'))) {
+    return `${clean.slice(0, 9)}${clean.slice(9)}`;
+  }
+  return clean;
+}
+
+/**
+ * Formats Sri Lankan phone numbers to international standard (+94 XX XXX XXXX)
+ */
+export function formatSLPhone(phone?: string): string {
+  if (!phone) return '+94 11 269 1111';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('94') && digits.length === 11) {
+    return `+94 ${digits.slice(2, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+  }
+  if (digits.startsWith('0') && digits.length === 10) {
+    return `+94 ${digits.slice(1, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+  }
+  return phone;
 }
 
 /**

@@ -23,7 +23,14 @@ export const CANONICAL_ROLES: CanonicalRole[] = [
 export function normalizeRole(role?: string | null): CanonicalRole {
   if (!role) return 'doctor'; // Default safe clinical fallback
   const lower = role.toLowerCase().trim();
-  if (lower === 'admin' || lower === 'administrator') return 'administrator';
+  if (
+    lower === 'admin' ||
+    lower === 'administrator' ||
+    lower === 'superadmin' ||
+    lower === 'super_admin'
+  ) {
+    return 'administrator';
+  }
   if (lower === 'lab_technician' || lower === 'laboratory_staff' || lower === 'lab') return 'laboratory_staff';
   if (lower === 'doctor' || lower === 'physician') return 'doctor';
   if (lower === 'nurse') return 'nurse';

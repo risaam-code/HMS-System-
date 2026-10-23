@@ -213,7 +213,7 @@ export function DataTable<T extends Record<string, any>>({
               <select
                 value={activeFilters[filter.key] || 'ALL'}
                 onChange={(e) => handleFilterChange(filter.key, e.target.value)}
-                className="h-9 appearance-none rounded-lg border border-slate-300 bg-white px-3 pr-8 text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="h-10 sm:h-9 appearance-none rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 pr-8 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="ALL">All {filter.label}</option>
                 {filter.options.map((opt) => (
@@ -231,7 +231,7 @@ export function DataTable<T extends Record<string, any>>({
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="text-xs text-slate-500 hover:text-rose-600 gap-1 h-9"
+              className="text-xs text-slate-500 hover:text-rose-600 gap-1 h-10 sm:h-9"
             >
               <X className="h-3.5 w-3.5" />
               Reset Filters
@@ -249,16 +249,16 @@ export function DataTable<T extends Record<string, any>>({
       )}
 
       {/* Table Container */}
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-xs">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/80 text-slate-600 uppercase tracking-wider font-semibold">
+            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 uppercase tracking-wider font-semibold">
               {columns.map((column) => (
                 <th
                   key={column.key}
                   scope="col"
                   className={`py-3.5 px-4 select-none ${
-                    column.sortable ? 'cursor-pointer hover:bg-slate-100/80' : ''
+                    column.sortable ? 'cursor-pointer hover:bg-slate-100/80 dark:hover:bg-slate-700/50' : ''
                   } ${column.className || ''}`}
                   onClick={() => column.sortable && handleSort(column.key)}
                 >
@@ -268,12 +268,12 @@ export function DataTable<T extends Record<string, any>>({
                       <span className="text-slate-400">
                         {sortKey === column.key ? (
                           sortDirection === 'asc' ? (
-                            <ChevronUp className="h-3.5 w-3.5 text-blue-600" />
+                            <ChevronUp className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
                           ) : (
-                            <ChevronDown className="h-3.5 w-3.5 text-blue-600" />
+                            <ChevronDown className="h-3.5 w-3.5 text-blue-600 dark:text-cyan-400" />
                           )
                         ) : (
-                          <ChevronsUpDown className="h-3.5 w-3.5 text-slate-300" />
+                          <ChevronsUpDown className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600" />
                         )}
                       </span>
                     )}
@@ -282,7 +282,7 @@ export function DataTable<T extends Record<string, any>>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {isLoading ? (
               Array.from({ length: pageSize }).map((_, index) => (
                 <TableRowSkeleton key={index} columns={columns.length} />
@@ -305,14 +305,14 @@ export function DataTable<T extends Record<string, any>>({
                   <tr
                     key={rowKey}
                     onClick={() => onRowClick && onRowClick(item)}
-                    className={`hover:bg-slate-50/80 transition-colors ${
+                    className={`hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors ${
                       onRowClick ? 'cursor-pointer' : ''
                     }`}
                   >
                     {columns.map((col) => (
                       <td
                         key={`${rowKey}-${col.key}`}
-                        className={`py-3 px-4 text-slate-700 ${col.className || ''}`}
+                        className={`py-3 px-4 text-slate-700 dark:text-slate-200 ${col.className || ''}`}
                       >
                         {col.render ? col.render(item) : item[col.key] ?? '—'}
                       </td>
@@ -327,7 +327,7 @@ export function DataTable<T extends Record<string, any>>({
 
       {/* Pagination Footer */}
       {!isLoading && totalItems > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-1 py-1 text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span>Rows per page:</span>
             <select
@@ -336,7 +336,7 @@ export function DataTable<T extends Record<string, any>>({
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="h-7 rounded-md border border-slate-300 bg-white px-2 py-0 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="h-8 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-0 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {pageSizeOptions.map((opt) => (
                 <option key={opt} value={opt}>
@@ -347,15 +347,15 @@ export function DataTable<T extends Record<string, any>>({
             <span className="text-slate-400">|</span>
             <span>
               Showing{' '}
-              <strong className="text-slate-800 font-semibold">
+              <strong className="text-slate-800 dark:text-white font-semibold">
                 {(validCurrentPage - 1) * pageSize + 1}
               </strong>{' '}
               to{' '}
-              <strong className="text-slate-800 font-semibold">
+              <strong className="text-slate-800 dark:text-white font-semibold">
                 {Math.min(validCurrentPage * pageSize, totalItems)}
               </strong>{' '}
               of{' '}
-              <strong className="text-slate-800 font-semibold">
+              <strong className="text-slate-800 dark:text-white font-semibold">
                 {totalItems}
               </strong>{' '}
               records
@@ -369,10 +369,11 @@ export function DataTable<T extends Record<string, any>>({
               disabled={validCurrentPage <= 1}
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               aria-label="Previous page"
+              className="h-9 w-9"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="px-2 font-medium text-slate-700">
+            <span className="px-2 font-medium text-slate-700 dark:text-slate-200">
               Page {validCurrentPage} of {totalPages}
             </span>
             <Button
@@ -381,6 +382,7 @@ export function DataTable<T extends Record<string, any>>({
               disabled={validCurrentPage >= totalPages}
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               aria-label="Next page"
+              className="h-9 w-9"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

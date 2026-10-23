@@ -57,6 +57,7 @@ export interface UserProfile {
   fullName: string;
   role: UserRole;
   roleId: CanonicalRole;
+  isSuperAdmin?: boolean;
   department?: string;
   avatarUrl?: string;
   phone?: string;
@@ -157,6 +158,7 @@ export interface Patient {
   dateOfBirth: string; // YYYY-MM-DD
   age: number;
   bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  nationalId?: string; // Sri Lankan NIC e.g. 852341982V or 199423801245
   phone: string;
   email?: string;
   address?: string;

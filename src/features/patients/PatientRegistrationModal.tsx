@@ -225,14 +225,14 @@ export function PatientRegistrationModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Input
               label="First Name"
-              placeholder="e.g. Eleanor"
+              placeholder="e.g. Kanthi"
               error={errors.firstName?.message}
               {...register('firstName')}
               required
             />
             <Input
               label="Last Name"
-              placeholder="e.g. Vance"
+              placeholder="e.g. Jayasuriya"
               error={errors.lastName?.message}
               {...register('lastName')}
               required
@@ -287,12 +287,12 @@ export function PatientRegistrationModal({
         {/* Section 2: Contact Information */}
         <div className="pt-2 border-t border-slate-100">
           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-            2. Contact Details & Residential Address
+            2. Contact Details & Residential Address (Sri Lanka)
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Input
-              label="Primary Phone Number"
-              placeholder="e.g. +1 (555) 234-5678"
+              label="Sri Lankan Primary Phone"
+              placeholder="e.g. +94 77 234 5678"
               error={errors.phone?.message}
               {...register('phone')}
               required
@@ -300,14 +300,14 @@ export function PatientRegistrationModal({
             <Input
               label="Email Address (Optional)"
               type="email"
-              placeholder="patient@example.com"
+              placeholder="patient@example.lk"
               error={errors.email?.message}
               {...register('email')}
             />
             <div className="md:col-span-2">
               <Input
-                label="Residential Street Address"
-                placeholder="Street address, apartment/suite, city, state, postal code"
+                label="Residential Street Address (District / Province)"
+                placeholder="e.g. 742 Galle Road, Kollupitiya, Colombo 03, Western Province"
                 error={errors.address?.message}
                 {...register('address')}
                 required
@@ -324,7 +324,7 @@ export function PatientRegistrationModal({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Input
               label="Contact Full Name"
-              placeholder="e.g. Arthur Vance"
+              placeholder="e.g. Nimal Jayasuriya"
               error={errors.emergencyContactName?.message}
               {...register('emergencyContactName')}
               required
@@ -338,7 +338,7 @@ export function PatientRegistrationModal({
             />
             <Input
               label="Emergency Phone"
-              placeholder="+1 (555) 234-5679"
+              placeholder="e.g. +94 77 234 5679"
               error={errors.emergencyContactPhone?.message}
               {...register('emergencyContactPhone')}
               required

@@ -113,7 +113,7 @@ export function Sidebar({
       {/* Main Sidebar Element */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-900 text-slate-200 border-r border-slate-800 transition-all duration-300 ease-in-out',
+          'fixed top-16 bottom-0 left-0 z-30 flex flex-col bg-slate-900 text-slate-200 border-r border-slate-800 transition-all duration-300 ease-in-out',
           isCollapsed ? 'lg:w-20' : 'lg:w-64',
           isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         )}
@@ -127,10 +127,10 @@ export function Sidebar({
             {!isCollapsed && (
               <div className="flex flex-col truncate">
                 <span className="text-sm font-bold tracking-tight text-white leading-tight">
-                  MedPulse HMS
+                  LankaHealth HMS
                 </span>
                 <span className="text-[10px] uppercase font-semibold text-teal-400 tracking-wider">
-                  St. Jude Memorial
+                  🇱🇰 Sri Lanka National Hospital
                 </span>
               </div>
             )}

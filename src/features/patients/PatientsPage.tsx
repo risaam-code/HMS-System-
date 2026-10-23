@@ -254,10 +254,10 @@ export function PatientsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Patient Management & Master Patient Index (MPI)
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Centralized electronic patient demographics, auto-generated MRNs, duplicate detection, and tabbed medical records.
           </p>
         </div>
@@ -266,6 +266,7 @@ export function PatientsPage() {
           <Button
             variant="primary"
             size="sm"
+            className="h-10 sm:h-9 px-4 text-xs font-semibold justify-center w-full sm:w-auto"
             onClick={() => {
               setPatientToEdit(null);
               setIsRegisterOpen(true);
@@ -278,40 +279,40 @@ export function PatientsPage() {
 
       {/* Quick Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Total Registered</span>
-            <Users className="w-4 h-4 text-blue-600" />
+            <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-xl font-bold text-slate-900 mt-1">{metrics.total}</div>
+          <div className="text-xl font-bold text-slate-900 dark:text-white mt-1">{metrics.total}</div>
           <span className="text-[10px] text-slate-400">Master Index Total</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Active Outpatients</span>
-            <HeartPulse className="w-4 h-4 text-teal-600" />
+            <HeartPulse className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <div className="text-xl font-bold text-teal-700 mt-1">{metrics.active}</div>
-          <span className="text-[10px] text-teal-600">Ambulatory care</span>
+          <div className="text-xl font-bold text-teal-700 dark:text-teal-400 mt-1">{metrics.active}</div>
+          <span className="text-[10px] text-teal-600 dark:text-teal-400">Ambulatory care</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Inpatient Admitted</span>
-            <BedDouble className="w-4 h-4 text-indigo-600" />
+            <BedDouble className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <div className="text-xl font-bold text-indigo-700 mt-1">{metrics.admitted}</div>
-          <span className="text-[10px] text-indigo-600">Ward bed census</span>
+          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-400 mt-1">{metrics.admitted}</div>
+          <span className="text-[10px] text-indigo-600 dark:text-indigo-400">Ward bed census</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Critical Care</span>
-            <AlertCircle className="w-4 h-4 text-rose-600" />
+            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
-          <div className="text-xl font-bold text-rose-700 mt-1">{metrics.critical}</div>
-          <span className="text-[10px] text-rose-600">ICU monitoring</span>
+          <div className="text-xl font-bold text-rose-700 dark:text-rose-400 mt-1">{metrics.critical}</div>
+          <span className="text-[10px] text-rose-600 dark:text-rose-400">ICU monitoring</span>
         </div>
       </div>
 

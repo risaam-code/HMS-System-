@@ -1,78 +1,99 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { Navbar } from '@/components/Navbar';
 import { Sidebar } from './Sidebar';
-import { Topbar } from './Topbar';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { useToast } from '@/components/ui/Toast';
 
+import { MobileBottomNav } from '@/components/MobileBottomNav';
+
 export function AppLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(true); // Default collapsed for clean layout
   const [quickActionModal, setQuickActionModal] = useState<'patient' | 'appointment' | null>(null);
+  const [emergencyModalOpen, setEmergencyModalOpen] = useState(false);
   const { success } = useToast();
 
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     success(
       quickActionModal === 'patient'
-        ? 'Patient registration submitted successfully.'
-        : 'Appointment scheduled successfully.',
+        ? 'Patient registration recorded successfully with Sri Lankan NIC verification.'
+        : 'Appointment scheduled successfully at LankaHealth clinical desk.',
       'Action Completed'
     );
     setQuickActionModal(null);
   };
 
+
+
   return (
-    <div className="min-h-screen bg-slate-50 flex">
-      {/* Sidebar Navigation */}
-      <Sidebar
-        isOpen={mobileSidebarOpen}
-        onClose={() => setMobileSidebarOpen(false)}
-        isCollapsed={desktopCollapsed}
-        onToggleCollapse={() => setDesktopCollapsed(!desktopCollapsed)}
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors">
+      {/* Floating Modern Navbar with Live Sri Lanka Clock & Role-Specific Navigation */}
+      <Navbar
+        onOpenEmergency={() => setEmergencyModalOpen(true)}
+        isEmergencyOpen={emergencyModalOpen}
+        onCloseEmergency={() => setEmergencyModalOpen(false)}
       />
 
-      {/* Main Content Layout */}
-      <div
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
-          desktopCollapsed ? 'lg:pl-20' : 'lg:pl-64'
-        }`}
-      >
-        {/* Sticky Topbar */}
-        <Topbar
-          onOpenMobileSidebar={() => setMobileSidebarOpen(true)}
-          onQuickAction={(action) => setQuickActionModal(action)}
+      {/* Main App Body with Top Offset for Floating Navbar */}
+      <div className="flex-1 flex pt-16">
+        {/* Sidebar Navigation (Collapsible drawer for deep modules) */}
+        <Sidebar
+          isOpen={mobileSidebarOpen}
+          onClose={() => setMobileSidebarOpen(false)}
+          isCollapsed={desktopCollapsed}
+          onToggleCollapse={() => setDesktopCollapsed(!desktopCollapsed)}
         />
 
-        {/* Dynamic Route Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          <Outlet />
-        </main>
+        {/* Main Content Layout (Clean, simplified, no stacked topbars) */}
+        <div
+          className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${desktopCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+            }`}
+        >
+          {/* Dynamic Route Content with pb-24 on mobile for bottom bar */}
+          <main className="flex-1 p-3 sm:p-5 lg:p-8 pb-24 md:pb-8 max-w-7xl w-full mx-auto">
+            <Outlet />
+          </main>
+        </div>
       </div>
 
-      {/* Quick Action Modal (New Appointment / Patient) */}
+      {/* Mobile Bottom Navigation Bar (Phones only, md:hidden) */}
+      <MobileBottomNav
+        onOpenMenu={() => setMobileSidebarOpen(true)}
+        onOpenEmergency={() => setEmergencyModalOpen(true)}
+      />
+
+      {/* Quick Action Modal (New Appointment / Patient Intake) */}
       <Modal
         isOpen={quickActionModal !== null}
         onClose={() => setQuickActionModal(null)}
         title={
           quickActionModal === 'patient'
-            ? 'Quick Patient Registration'
-            : 'Schedule New Appointment'
+            ? 'Quick Patient Registration (Sri Lanka Formats)'
+            : 'Schedule Channeling / Specialist Appointment'
         }
-        description="Quick intake form. Detailed records can be managed within the respective clinical modules."
+        description="Quick intake form for LankaHealth HMS. Full electronic medical records can be managed within clinical modules."
       >
         <form onSubmit={handleQuickSubmit} className="space-y-4 pt-1">
           {quickActionModal === 'patient' ? (
             <>
               <div className="grid grid-cols-2 gap-3">
-                <Input label="First Name" required placeholder="e.g. Eleanor" />
-                <Input label="Last Name" required placeholder="e.g. Vance" />
+                <Input label="First Name" required placeholder="e.g. Kanthi" />
+                <Input label="Last Name" required placeholder="e.g. Jayasuriya" />
               </div>
               <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Sri Lankan NIC (National ID)"
+                  required
+                  placeholder="e.g. 198261401290 or 826140129V"
+                />
                 <Input label="Date of Birth" type="date" required />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <Select
                   label="Gender"
                   options={[
@@ -81,40 +102,62 @@ export function AppLayout() {
                     { label: 'Other', value: 'other' },
                   ]}
                 />
+                <Select
+                  label="Blood Group"
+                  options={[
+                    { label: 'A+ (Positive)', value: 'A+' },
+                    { label: 'B+ (Positive)', value: 'B+' },
+                    { label: 'O+ (Positive)', value: 'O+' },
+                    { label: 'AB+ (Positive)', value: 'AB+' },
+                    { label: 'O- (Universal Donor)', value: 'O-' },
+                    { label: 'A- (Negative)', value: 'A-' },
+                    { label: 'B- (Negative)', value: 'B-' },
+                    { label: 'AB- (Negative)', value: 'AB-' },
+                  ]}
+                />
               </div>
-              <Input label="Contact Phone" type="tel" required placeholder="+1 (555) 000-0000" />
+              <Input
+                label="Sri Lankan Phone Number"
+                required
+                placeholder="e.g. 077 123 4567 or +94 77 123 4567"
+              />
+              <Input
+                label="Residential Address"
+                required
+                placeholder="e.g. 45/2 Galle Road, Colombo 03"
+              />
             </>
           ) : (
             <>
-              <Input label="Patient Name or MRN" required placeholder="Search patient..." />
+              <Input label="Patient Name or MRN" required placeholder="e.g. MRN-2026-00101" />
               <div className="grid grid-cols-2 gap-3">
                 <Select
-                  label="Department"
+                  label="Specialist / Channeling Doctor"
                   options={[
-                    { label: 'Cardiology', value: 'cardiology' },
-                    { label: 'Neurology', value: 'neurology' },
-                    { label: 'Orthopedics', value: 'orthopedics' },
-                    { label: 'Pediatrics', value: 'pediatrics' },
-                    { label: 'General Surgery', value: 'surgery' },
+                    { label: 'Dr. Janaka Senaratne (Cardiology)', value: 'doc-001' },
+                    { label: 'Dr. Shirani Ranasinghe (Paediatrics)', value: 'doc-002' },
+                    { label: 'Dr. Harsha Alwis (Orthopaedics)', value: 'doc-003' },
+                    { label: 'Dr. Priyantha Jayasuriya (General OPD)', value: 'doc-004' },
                   ]}
                 />
-                <Select
-                  label="Attending Doctor"
-                  options={[
-                    { label: 'Dr. Robert Vance (Cardio)', value: 'doc-1' },
-                    { label: 'Dr. Elena Rostova (Neuro)', value: 'doc-2' },
-                    { label: 'Dr. Marcus Brody (Ortho)', value: 'doc-3' },
-                  ]}
-                />
+                <Input label="Appointment Date" type="date" required />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <Input label="Appointment Date" type="date" required />
-                <Input label="Time Slot" type="time" required />
+                <Select
+                  label="Time Slot"
+                  options={[
+                    { label: '09:00 AM - 09:30 AM', value: '09:00' },
+                    { label: '09:30 AM - 10:00 AM', value: '09:30' },
+                    { label: '10:00 AM - 10:30 AM', value: '10:00' },
+                    { label: '10:30 AM - 11:00 AM', value: '10:30' },
+                  ]}
+                />
+                <Input label="Consultation Fee (Rs.)" defaultValue="3500" disabled />
               </div>
             </>
           )}
 
-          <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+          <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
             <Button
               type="button"
               variant="outline"
@@ -123,8 +166,8 @@ export function AppLayout() {
             >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Confirm & Save
+            <Button type="submit" variant="primary" size="sm" className="bg-[#049bdb] hover:bg-[#0388c1] text-white">
+              Save & Print Token Slip
             </Button>
           </div>
         </form>
@@ -132,3 +175,4 @@ export function AppLayout() {
     </div>
   );
 }
+export default AppLayout;

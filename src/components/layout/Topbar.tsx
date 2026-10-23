@@ -133,7 +133,7 @@ export function Topbar({ onOpenMobileSidebar, onQuickAction }: TopbarProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur-xs px-4 sm:px-6">
+      <header className="sticky top-16 z-20 flex h-14 items-center justify-between border-b border-slate-200 bg-white/95 backdrop-blur-xs px-4 sm:px-6">
         {/* Left: Mobile hamburger & Global Search */}
         <div className="flex items-center gap-3 flex-1 max-w-md">
           <button
@@ -435,7 +435,7 @@ export function Topbar({ onOpenMobileSidebar, onQuickAction }: TopbarProps) {
               label="Contact Phone"
               value={editPhone}
               onChange={(e) => setEditPhone(e.target.value)}
-              placeholder="+1 (555) 000-0000"
+              placeholder="+94 77 000 0000"
             />
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">

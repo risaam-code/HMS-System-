@@ -394,38 +394,46 @@ export function AppointmentsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
             Appointment Management & Doctor Scheduling
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Book consultations, track patient check-ins, manage cancellations, and prevent physician double-booking.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           {/* Table / Calendar Toggle */}
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+          <div className="flex items-center justify-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
             <button
               type="button"
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                viewMode === 'table' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all h-8 ${viewMode === 'table'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
             >
               <TableIcon className="w-3.5 h-3.5" /> Table View
             </button>
             <button
               type="button"
               onClick={() => setViewMode('calendar')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                viewMode === 'calendar' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all h-8 ${viewMode === 'calendar'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs font-bold'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+
             >
               <CalendarDays className="w-3.5 h-3.5" /> Calendar View
             </button>
           </div>
 
-          <Button variant="primary" size="sm" onClick={() => setIsBookModalOpen(true)}>
+          <Button
+            variant="primary"
+            size="sm"
+            className="h-10 sm:h-9 px-4 text-xs font-semibold justify-center w-full sm:w-auto"
+            onClick={() => setIsBookModalOpen(true)}
+          >
             <PlusCircle className="w-4 h-4 mr-1.5" /> Book Appointment
           </Button>
         </div>
@@ -433,40 +441,40 @@ export function AppointmentsPage() {
 
       {/* Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Total Bookings</span>
-            <Calendar className="w-4 h-4 text-blue-600" />
+            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-xl font-bold text-slate-900 mt-1">{metrics.total}</div>
+          <div className="text-xl font-bold text-slate-900 dark:text-white mt-1">{metrics.total}</div>
           <span className="text-[10px] text-slate-400">All registered slots</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Upcoming / Confirmed</span>
-            <Clock className="w-4 h-4 text-teal-600" />
+            <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <div className="text-xl font-bold text-teal-700 mt-1">{metrics.scheduled}</div>
-          <span className="text-[10px] text-teal-600">Pending consultation</span>
+          <div className="text-xl font-bold text-teal-700 dark:text-teal-400 mt-1">{metrics.scheduled}</div>
+          <span className="text-[10px] text-teal-600 dark:text-teal-400">Pending consultation</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>In Consultation</span>
-            <Play className="w-4 h-4 text-indigo-600" />
+            <Play className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
           </div>
-          <div className="text-xl font-bold text-indigo-700 mt-1">{metrics.inProgress}</div>
-          <span className="text-[10px] text-indigo-600">Active with doctor</span>
+          <div className="text-xl font-bold text-indigo-700 dark:text-indigo-400 mt-1">{metrics.inProgress}</div>
+          <span className="text-[10px] text-indigo-600 dark:text-indigo-400">Active with doctor</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Completed Today</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-xl font-bold text-emerald-700 mt-1">{metrics.completed}</div>
-          <span className="text-[10px] text-emerald-600">Discharged visits</span>
+          <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 mt-1">{metrics.completed}</div>
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400">Discharged visits</span>
         </div>
       </div>
 
