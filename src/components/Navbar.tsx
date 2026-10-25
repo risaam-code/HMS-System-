@@ -18,10 +18,12 @@ import {
   Receipt,
   LayoutDashboard,
   Clock,
-  Sparkles,
   Sun,
   Moon,
   Crown,
+  Building2,
+  FileText,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -36,7 +38,6 @@ interface NavItemDef {
   roles?: CanonicalRole[];
 }
 
-// Navigation links dynamically filtered by role (Super Admin sees all)
 const allNavItems: NavItemDef[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/patients', label: 'Patients & OPD', icon: Activity, roles: ['administrator', 'doctor', 'nurse', 'receptionist'] },
@@ -61,7 +62,6 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
   const { theme, toggleTheme } = useTheme();
   const { success } = useToast();
 
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [internalEmergencyOpen, setInternalEmergencyOpen] = useState(false);
@@ -106,16 +106,6 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
     return () => clearInterval(timer);
   }, []);
 
-  // Smooth scroll detection without jumping container widths
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 15);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   // Auto-close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -152,14 +142,22 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
   const isSuperAdmin = Boolean(profile?.isSuperAdmin || canonical === 'administrator');
   const roleMeta = ROLE_INFO[canonical] || { title: role, badgeVariant: 'default' };
 
-  // Super Admin has master access to ALL links.
-  // Regular workers only see links relevant to their assigned department.
   const activeNavItems = isSuperAdmin
     ? allNavItems
     : allNavItems.filter((item) => {
         if (!item.roles) return true;
         return item.roles.includes(canonical);
       });
+
+  // Determine current active page label
+  const currentNav = allNavItems.find((item) =>
+    item.href === '/dashboard'
+      ? location.pathname === '/dashboard' || location.pathname === '/'
+      : location.pathname.startsWith(item.href)
+  );
+
+  const CurrentIcon = currentNav?.icon || LayoutDashboard;
+  const currentNavLabel = currentNav?.label || 'Clinical Desk';
 
   const initials = isSuperAdmin
     ? 'SA'
@@ -174,203 +172,219 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
 
   return (
     <>
-      {/* Enterprise fixed header: stable height, edge-to-edge alignment with sidebar */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/90 dark:border-slate-800 backdrop-blur-md shadow-xs transition-colors duration-200">
-        <nav className="w-full max-w-7xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between gap-4">
-          {/* Brand Logo & Sri Lanka Hospital Name */}
-          <Link
-            to={isAuthenticated ? '/dashboard' : '/login'}
-            className="flex items-center gap-2.5 group focus:outline-none shrink-0"
-          >
-            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-[#049bdb] to-teal-500 text-white flex items-center justify-center shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-              <HeartPulse className="h-5 w-5 text-white" />
-            </div>
-            <div className="flex flex-col text-left">
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
-                  LankaHealth
-                </span>
-                <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 uppercase tracking-wider">
-                  🇱🇰 HMS
+      {/* Enterprise Fixed Header - Spans full width with clean right alignment */}
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 backdrop-blur-md shadow-xs transition-colors duration-200">
+        <nav className="w-full h-full px-3 sm:px-5 lg:px-6 flex items-center justify-between gap-3">
+          
+          {/* LEFT: Brand Logo & Sri Lanka Hospital Name */}
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              to={isAuthenticated ? '/dashboard' : '/login'}
+              className="flex items-center gap-2.5 group focus:outline-none"
+            >
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-[#049bdb] to-teal-500 text-white flex items-center justify-center shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200 shrink-0">
+                <HeartPulse className="h-5 w-5 text-white" />
+              </div>
+              <div className="flex flex-col text-left">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-300 transition-colors">
+                    LankaHealth
+                  </span>
+                  <span className="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800 uppercase tracking-wider">
+                    🇱🇰 HMS
+                  </span>
+                </div>
+                <span className="hidden sm:inline-block text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-tight">
+                  Sri Lanka National Hospital
                 </span>
               </div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium tracking-tight">
-                Sri Lanka National Hospital
+            </Link>
+          </div>
+
+          {/* CENTER: Live Sri Lanka Real-Time Clock & Active Section Indicator */}
+          <div className="hidden md:flex items-center gap-3 shrink-0">
+            {/* Live Colombo Time Clock */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs text-slate-700 dark:text-slate-300 shadow-2xs">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-[11px] text-cyan-700 dark:text-cyan-400 font-semibold">{slDate}</span>
+              <span className="text-slate-400 dark:text-slate-600">•</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white tracking-wider">{slTime}</span>
+              <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold uppercase bg-emerald-100 dark:bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
+                SLST
               </span>
             </div>
-          </Link>
 
-          {/* Center: Live Sri Lanka Real-Time Clock */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/90 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 text-xs text-slate-700 dark:text-slate-300">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-[11px] text-cyan-700 dark:text-cyan-400 font-semibold">{slDate}</span>
-            <span className="text-slate-400 dark:text-slate-600">•</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-white tracking-wider">{slTime}</span>
-            <span className="text-[9px] text-emerald-700 dark:text-emerald-400 font-semibold uppercase bg-emerald-100 dark:bg-emerald-950/80 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
-              SLST
-            </span>
+            {/* Active Clinical Section Breadcrumb */}
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/70 text-xs text-slate-700 dark:text-slate-300">
+              <CurrentIcon className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+              <span className="font-semibold text-slate-900 dark:text-white">{currentNavLabel}</span>
+              <span className="text-slate-400 dark:text-slate-600">•</span>
+              <span className="text-[10px] text-cyan-700 dark:text-cyan-400 font-bold uppercase tracking-wider">
+                {isSuperAdmin ? 'Master Access' : roleMeta.title}
+              </span>
+            </div>
           </div>
 
-          {/* Desktop Navigation Links (Role-tailored for workers, all for Super Admin) */}
-          <div className="hidden lg:flex items-center gap-1">
-            {activeNavItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-150 ${
-                    isActive
-                      ? 'text-cyan-700 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-950/60 border border-cyan-200 dark:border-cyan-800 shadow-xs'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/70'
-                  }`}
-                >
-                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-cyan-600 dark:text-cyan-400' : 'text-slate-400 dark:text-slate-400'}`} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Right Actions: Theme Toggle + 1990 Emergency + Worker Profile Dropdown */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* Dark Mode / Light Mode Theme Toggle Button - Immediate Contrast */}
+          {/* RIGHT ACTIONS: Always visible, never pushed off-screen, no zoom required! */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto z-10">
+            {/* Dark Mode / Light Mode Theme Toggle Button */}
             <button
+              type="button"
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 border border-slate-200 dark:border-slate-700 transition-colors focus:outline-none"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-500 dark:text-amber-400 border border-slate-200 dark:border-slate-700 transition-colors focus:outline-none shrink-0 cursor-pointer shadow-2xs"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               aria-label="Toggle Theme"
             >
               {theme === 'dark' ? (
-                <Sun className="h-4 w-4 text-amber-400" />
+                <Sun className="h-4 w-4 text-amber-400 transition-transform hover:rotate-45" />
               ) : (
-                <Moon className="h-4 w-4 text-slate-700" />
+                <Moon className="h-4 w-4 text-slate-700 dark:text-slate-200 transition-transform hover:-rotate-12" />
               )}
             </button>
 
-            {/* 1990 Suwa Seriya Ambulance Hotline Pill */}
+            {/* 1990 Suwa Seriya Ambulance Hotline */}
             <button
+              type="button"
               onClick={() => setEmergencyModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-[11px] font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-[11px] font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
               title="Sri Lanka 1990 Suwa Seriya Emergency Ambulance"
             >
               <PhoneCall className="h-3 w-3 animate-pulse text-rose-600 dark:text-rose-400" />
               <span>1990</span>
-              <span className="hidden xl:inline text-[10px] text-rose-600/80 dark:text-rose-300/80 font-normal">
+              <span className="hidden sm:inline text-[10px] text-rose-600/80 dark:text-rose-300/80 font-normal">
                 Suwa Seriya
               </span>
             </button>
 
-            {/* Authenticated Staff Chip or Login Button */}
+            {/* Authenticated Staff Chip & Direct Logout */}
             {isAuthenticated ? (
-              <div className="relative">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                {/* Profile Pill & Dropdown */}
+                <div className="relative shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center gap-1.5 sm:gap-2 p-1 sm:pl-1.5 sm:pr-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white transition-colors focus:outline-none shrink-0 cursor-pointer"
+                    title={profile?.fullName || 'User Profile'}
+                  >
+                    <div className={`h-7 w-7 rounded-lg text-white flex items-center justify-center font-bold text-[11px] ring-1 ring-black/10 dark:ring-white/20 shrink-0 ${
+                      isSuperAdmin
+                        ? 'bg-gradient-to-tr from-amber-500 to-rose-500 shadow-xs'
+                        : 'bg-gradient-to-tr from-cyan-600 to-teal-500 shadow-xs'
+                    }`}>
+                      {isSuperAdmin ? <Crown className="w-4 h-4 text-white" /> : initials}
+                    </div>
+                    <div className="hidden sm:flex flex-col text-left max-w-[120px]">
+                      <span className="text-xs font-semibold text-slate-900 dark:text-white leading-tight truncate">
+                        {isSuperAdmin ? 'Super Admin' : (profile?.fullName || 'Staff Member')}
+                      </span>
+                      <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium capitalize truncate flex items-center gap-0.5">
+                        {isSuperAdmin && <Crown className="w-2.5 h-2.5 text-amber-500" />}
+                        {isSuperAdmin ? 'All Access' : roleMeta.title}
+                      </span>
+                    </div>
+                    <ChevronDown className="h-3.5 w-3.5 text-slate-400 dark:text-slate-400 shrink-0" />
+                  </button>
+
+                  {/* Profile Dropdown */}
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95">
+                      <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
+                        <div className="flex items-center gap-1.5">
+                          {isSuperAdmin && <Crown className="w-4 h-4 text-amber-500" />}
+                          <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {isSuperAdmin ? 'Dr. Ruwan Ekanayake (Super Admin)' : profile?.fullName}
+                          </p>
+                        </div>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{profile?.email}</p>
+                        <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${
+                            isSuperAdmin
+                              ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
+                              : 'bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800'
+                          }`}>
+                            {isSuperAdmin ? 'Super Administrator' : roleMeta.title}
+                          </span>
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                            {profile?.department || 'National Hospital of Sri Lanka'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Super Admin Role Simulator */}
+                      {isSuperAdmin && (
+                        <div className="py-2 border-b border-slate-100 dark:border-slate-800">
+                          <div className="px-3 py-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
+                            <Crown className="w-3 h-3 text-amber-500" />
+                            Role Simulator (Preview As)
+                          </div>
+                          <div className="grid grid-cols-2 gap-1 px-1 mt-1">
+                            {CANONICAL_ROLES.map((r) => {
+                              const isCurrent = canonical === r;
+                              return (
+                                <button
+                                  key={r}
+                                  type="button"
+                                  onClick={() => handleRoleChange(r)}
+                                  className={`text-left px-2 py-1.5 rounded-lg text-[11px] transition-colors truncate cursor-pointer ${
+                                    isCurrent
+                                      ? 'bg-[#049bdb] text-white font-bold'
+                                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                  }`}
+                                >
+                                  {ROLE_INFO[r]?.title || r}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Sign out inside Dropdown */}
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        >
+                          <LogOut className="h-3.5 w-3.5" />
+                          <span>Sign Out of LankaHealth</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* DIRECT QUICK LOGOUT BUTTON - Always visible on navbar without zoom! */}
                 <button
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white transition-colors focus:outline-none"
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-colors cursor-pointer shrink-0 shadow-2xs"
+                  title="Sign Out of LankaHealth HMS"
+                  aria-label="Logout"
                 >
-                  <div className={`h-7 w-7 rounded-lg text-white flex items-center justify-center font-bold text-[11px] ring-1 ring-black/10 dark:ring-white/20 ${
-                    isSuperAdmin
-                      ? 'bg-gradient-to-tr from-amber-500 to-rose-500 shadow-xs'
-                      : 'bg-gradient-to-tr from-cyan-600 to-teal-500 shadow-xs'
-                  }`}>
-                    {isSuperAdmin ? <Crown className="w-4 h-4 text-white" /> : initials}
-                  </div>
-                  <div className="hidden sm:flex flex-col text-left">
-                    <span className="text-xs font-semibold text-slate-900 dark:text-white leading-tight max-w-[120px] truncate">
-                      {isSuperAdmin ? 'Super Admin' : (profile?.fullName || 'Staff Member')}
-                    </span>
-                    <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-medium capitalize flex items-center gap-1">
-                      {isSuperAdmin && <Crown className="w-3 h-3 text-amber-500 dark:text-amber-400" />}
-                      {isSuperAdmin ? 'All Access' : roleMeta.title}
-                    </span>
-                  </div>
-                  <ChevronDown className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
-
-                {/* Profile Dropdown */}
-                {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xl border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95">
-                    <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
-                      <div className="flex items-center gap-1.5">
-                        {isSuperAdmin && <Crown className="w-4 h-4 text-amber-500" />}
-                        <p className="text-xs font-bold text-slate-900 dark:text-white">
-                          {isSuperAdmin ? 'Dr. Ruwan Ekanayake (Super Admin)' : profile?.fullName}
-                        </p>
-                      </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{profile?.email}</p>
-                      <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border capitalize ${
-                          isSuperAdmin
-                            ? 'bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700'
-                            : 'bg-cyan-100 dark:bg-cyan-950/80 text-cyan-800 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800'
-                        }`}>
-                          {isSuperAdmin ? 'Super Administrator' : roleMeta.title}
-                        </span>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                          {profile?.department || 'Hospital Directorate'}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* ONLY Super Admin can switch roles on the fly */}
-                    {isSuperAdmin && (
-                      <div className="py-2 border-b border-slate-100 dark:border-slate-800">
-                        <div className="px-3 py-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                          <Crown className="w-3 h-3 text-amber-500" />
-                          Super Admin Role Simulator
-                        </div>
-                        <div className="grid grid-cols-2 gap-1 px-1 mt-1">
-                          {CANONICAL_ROLES.map((r) => {
-                            const isCurrent = canonical === r;
-                            return (
-                              <button
-                                key={r}
-                                onClick={() => handleRoleChange(r)}
-                                className={`text-left px-2 py-1.5 rounded-lg text-[11px] transition-colors truncate ${
-                                  isCurrent
-                                    ? 'bg-[#049bdb] text-white font-bold'
-                                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                }`}
-                              >
-                                {ROLE_INFO[r]?.title || r}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Sign out */}
-                    <div className="pt-1">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-                      >
-                        <LogOut className="h-3.5 w-3.5" />
-                        <span>Sign Out of Hospital</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#049bdb] to-teal-500 hover:from-[#0388c1] hover:to-teal-600 text-white text-xs font-semibold shadow-md transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#049bdb] to-teal-500 hover:from-[#0388c1] hover:to-teal-600 text-white text-xs font-semibold shadow-md transition-all shrink-0"
               >
                 <User className="h-3.5 w-3.5" />
                 <span>Staff Login</span>
               </Link>
             )}
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Mobile Navigation Drawer Toggle */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 focus:outline-none"
+              className="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 focus:outline-none shrink-0"
               aria-label="Toggle navigation"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -420,11 +434,12 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
           {isAuthenticated && (
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
               <button
+                type="button"
                 onClick={handleLogout}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 font-semibold text-sm border border-rose-200 dark:border-rose-900"
               >
                 <LogOut className="w-4 h-4" />
-                Sign Out
+                Sign Out of LankaHealth
               </button>
             </div>
           )}
@@ -436,6 +451,7 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl border border-rose-200 dark:border-rose-900/60 p-6 max-w-md w-full shadow-2xl relative space-y-4">
             <button
+              type="button"
               onClick={() => setEmergencyModalOpen(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white"
             >
@@ -476,6 +492,7 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
                 Call 1990 Now
               </a>
               <button
+                type="button"
                 onClick={() => setEmergencyModalOpen(false)}
                 className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300"
               >
@@ -488,4 +505,5 @@ export function Navbar({ onOpenEmergency, isEmergencyOpen, onCloseEmergency }: N
     </>
   );
 }
+
 export default Navbar;

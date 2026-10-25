@@ -123,7 +123,7 @@ export function DoctorsPage() {
       header: 'Department',
       sortable: true,
       render: (doc) => (
-        <span className="font-medium text-slate-800 text-xs">
+        <span className="font-medium text-slate-800 dark:text-slate-200 text-xs">
           {doc.department}
         </span>
       ),
@@ -132,7 +132,7 @@ export function DoctorsPage() {
       key: 'licenseNumber',
       header: 'License #',
       render: (doc) => (
-        <span className="font-mono text-xs text-slate-600 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded">
+        <span className="font-mono text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded">
           {doc.licenseNumber}
         </span>
       ),
@@ -143,8 +143,8 @@ export function DoctorsPage() {
       sortable: true,
       render: (doc) => (
         <div className="text-xs">
-          <span className="font-bold text-emerald-800 block">${doc.consultationFee}.00</span>
-          <span className="text-[10px] text-slate-400">{doc.experienceYears} yrs experience</span>
+          <span className="font-bold text-emerald-800 dark:text-emerald-400 block">Rs. {doc.consultationFee.toLocaleString()}</span>
+          <span className="text-[10px] text-slate-400 dark:text-slate-500">{doc.experienceYears} yrs experience</span>
         </div>
       ),
     },
@@ -152,9 +152,9 @@ export function DoctorsPage() {
       key: 'contactNumber',
       header: 'Contact',
       render: (doc) => (
-        <div className="text-xs text-slate-600">
+        <div className="text-xs text-slate-600 dark:text-slate-300">
           <span className="font-mono block">{doc.contactNumber}</span>
-          <span className="text-[10px] text-slate-400 truncate block max-w-[130px]">{doc.email}</span>
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate block max-w-[130px]">{doc.email}</span>
         </div>
       ),
     },
@@ -181,7 +181,7 @@ export function DoctorsPage() {
             type="button"
             title="View Full Profile & Schedule"
             onClick={() => setSelectedDoctor(doc)}
-            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded"
+            className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 rounded"
           >
             <Eye className="w-3.5 h-3.5" />
           </button>
@@ -194,7 +194,7 @@ export function DoctorsPage() {
                   setDoctorToEdit(doc);
                   setIsRegisterOpen(true);
                 }}
-                className="p-1.5 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded"
+                className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-950/50 rounded"
               >
                 <Edit2 className="w-3.5 h-3.5" />
               </button>
@@ -204,8 +204,8 @@ export function DoctorsPage() {
                 onClick={() => handleToggleStatus(doc)}
                 className={`p-1.5 rounded ${
                   doc.status === 'active'
-                    ? 'text-slate-500 hover:text-amber-600 hover:bg-amber-50'
-                    : 'text-slate-500 hover:text-emerald-600 hover:bg-emerald-50'
+                    ? 'text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/50'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50'
                 }`}
               >
                 <Power className="w-3.5 h-3.5" />
@@ -262,40 +262,40 @@ export function DoctorsPage() {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Total Physicians</span>
-            <Stethoscope className="w-4 h-4 text-teal-600" />
+            <Stethoscope className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </div>
-          <div className="text-xl font-bold text-slate-900 mt-1">{metrics.total}</div>
+          <div className="text-xl font-bold text-slate-900 dark:text-white mt-1">{metrics.total}</div>
           <span className="text-[10px] text-slate-400">Credentialed specialists</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Active on Duty</span>
-            <Users className="w-4 h-4 text-emerald-600" />
+            <Users className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <div className="text-xl font-bold text-emerald-700 mt-1">{metrics.active}</div>
-          <span className="text-[10px] text-emerald-600">Available for bookings</span>
+          <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 mt-1">{metrics.active}</div>
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400">Available for bookings</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>Specialties Covered</span>
-            <Award className="w-4 h-4 text-blue-600" />
+            <Award className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
-          <div className="text-xl font-bold text-blue-700 mt-1">{metrics.depts}</div>
-          <span className="text-[10px] text-blue-600">Clinical departments</span>
+          <div className="text-xl font-bold text-blue-700 dark:text-blue-400 mt-1">{metrics.depts}</div>
+          <span className="text-[10px] text-blue-600 dark:text-blue-400">Clinical departments</span>
         </div>
 
-        <div className="p-3.5 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="p-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>In Consultation</span>
-            <Clock className="w-4 h-4 text-amber-600" />
+            <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
-          <div className="text-xl font-bold text-amber-700 mt-1">{metrics.inConsult}</div>
-          <span className="text-[10px] text-amber-600">Active encounters</span>
+          <div className="text-xl font-bold text-amber-700 dark:text-amber-400 mt-1">{metrics.inConsult}</div>
+          <span className="text-[10px] text-amber-600 dark:text-amber-400">Active encounters</span>
         </div>
       </div>
 
